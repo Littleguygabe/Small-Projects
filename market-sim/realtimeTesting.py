@@ -10,6 +10,10 @@ import importlib
 import time
 import multiprocessing
 
+
+# Look at principle component analysis
+
+
 init(autoreset=True)
 
 stock_params_dict = {
@@ -33,6 +37,10 @@ stock_params_dict = {
     "Semiconductor (Cyclical)": [ [0.28, 0.48], [-0.30, 0.60] ],
     "Precious Metal (Gold)": [ [0.05, 0.20], [-0.01, 0.30] ],
     "SaaS (Software)":       [ [0.26, 0.42], [-0.35, 0.65] ]
+}
+
+single_stable = {
+    'stable' : [[0.2,0.01],[0.2,0.01]]
 }
 
 class stockSimulation:
@@ -231,7 +239,8 @@ def handleLiveTesting(multi_market_params, algo_func):
             row_buffer.append(header)
             row_buffer.append("-" * len(header)) 
 
-            results = pool.starmap(get_pnl_row, parallel_args)
+            results = pool.starmap(get_pnl_row, parallel_args) #error being generated on this line?
+
 
             for row_string, updated_tester in results:
                 row_buffer.append(row_string)
@@ -263,12 +272,25 @@ def get_pnl_row(market_algorithm, sector, COL_WIDTH, NAME_WIDTH):
 
     daily_pnl = current_cap - previous_cap
 
+    #get the position exposure
+    
+    exposure = 0
+
+    for stock in market_algorithm:
+        if market_algorithm.positons[stock] == None:
+            exposure += 0
+
+        else:
+            exposure += market_algorithm.positions[stock][2]*market_algorithm.positions[stock][0]
+
     row_string = (
         f"{sector:<{NAME_WIDTH}}"
         f"{Fore.WHITE}{current_cap:>{COL_WIDTH},.2f}" 
         f"{Fore.RED if total_pnl < 0 else Fore.GREEN}{total_pnl:>{COL_WIDTH},.2f}"
         f"{Fore.RED if total_pnl_pct < 0 else Fore.GREEN}{total_pnl_pct:>{COL_WIDTH}.2f}%"
         f"{Fore.RED if daily_pnl < 0 else Fore.GREEN}{daily_pnl:>{COL_WIDTH},.2f}"
+        #print positon exposure
+
         f"{Style.RESET_ALL}"
     )
     
