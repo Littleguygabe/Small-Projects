@@ -12,6 +12,7 @@ import multiprocessing
 
 
 # Look at principle component analysis
+#some MIT linear algebra course
 
 
 init(autoreset=True)
@@ -239,6 +240,7 @@ def handleLiveTesting(multi_market_params, algo_func):
             row_buffer.append(header)
             row_buffer.append("-" * len(header)) 
 
+
             results = pool.starmap(get_pnl_row, parallel_args) #error being generated on this line?
 
 
@@ -276,8 +278,8 @@ def get_pnl_row(market_algorithm, sector, COL_WIDTH, NAME_WIDTH):
     
     exposure = 0
 
-    for stock in market_algorithm:
-        if market_algorithm.positons[stock] == None:
+    for stock in market_algorithm.universe:
+        if market_algorithm.positions[stock] == None:
             exposure += 0
 
         else:
@@ -329,4 +331,4 @@ if __name__ == '__main__':
         print(f"Error: The file {chosen_algo_name}.py does not have a 'runAnalysis' function.")
         exit()
 
-    handleLiveTesting(stock_params_dict,algo_func)
+    handleLiveTesting(single_stable,algo_func)

@@ -75,21 +75,47 @@ class Game:
         else:
             self.communityCards.append(self.pickCard())
 
-def calculateOuts(hand,communityCards):
-    # us fuzzy matching to 5 card sets to figure out how many outs we have
-    pass
+class handMatcher():
+    def __init__(self,flop=None) -> None:
+        if flop is not None:
+            self.flop = flop
+        else:
+            self.flop = []
+
+
+    def fuzzyMatch(self,hand):
+        print(f'flop > {self.flop} hand > {hand}')
+        self.rankMatch(hand)
+        self.suitMatch(hand)
+
+    def rankMatch(self,hand):
+    # just setup a simple counter to track the number of similar suits for the flop and the deck
+        tracker_dict = {
+            'H':0,
+            'D':0,
+            'S':0,
+            'C':0
+        }
+        for card in (hand+self.flop):
+            tracker_dict[card[0]] +=1
+        
+        
+
+    def suitMatch(self,hand):
+        pass
+
 
 if __name__ == '__main__':
     game = Game()
+    matcher = handMatcher()
     game.dealHands(5)
     print(game.dealtHands)
-    print(f'cc > {game.communityCards}')
     game.progressGame()
-    print(f'cc > {game.communityCards}')
-    game.progressGame()
-    print(f'cc > {game.communityCards}')
-    game.progressGame()
-    print(f'cc > {game.communityCards}')
+    matcher.flop = game.communityCards[:3]
+    matcher.fuzzyMatch(game.dealtHands[0])
+
+
+
 
 
 
